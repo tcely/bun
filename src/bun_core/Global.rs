@@ -147,14 +147,14 @@ impl Default for DumpStackTraceOptions {
     }
 }
 
-/// T0 fallback prints raw return
-/// addresses — **no symbolication** (the `backtrace` crate is not a T0 dep,
-/// and `std::backtrace` cannot resolve a stored address list). This is a
-/// deliberate debug-UX downgrade for the *stored*-trace path
-/// (ref_count leak reports); the *current*-stack path below
-/// uses `std::backtrace` and stays symbolicated. Crash-report paths that need
-/// llvm-symbolizer / pdb-addr2line call `bun_crash_handler::dump_stack_trace`
-/// directly — that crate sits above us so it owns the rich impl without a hook.
+/// T0 fallback prints raw return addresses with **no symbolication**: T0 has
+/// no symbolizer, and release builds compile std without one (see
+/// `-Zbuild-std-features` in scripts/build/rust.ts). This is a deliberate
+/// debug-UX downgrade for the *stored*-trace path (ref_count leak reports);
+/// the *current*-stack path below hands off to `bun_crash_handler`, which
+/// owns symbolication. Crash-report paths that need llvm-symbolizer /
+/// pdb-addr2line call `bun_crash_handler::dump_stack_trace` directly; that
+/// crate sits above us so it owns the rich impl without a hook.
 ///
 /// `limits.stop_at_jsc_llint` / `skip_stdlib` / `skip_*_patterns` are accepted
 /// for signature parity but **ignored** here (they require symbol names to

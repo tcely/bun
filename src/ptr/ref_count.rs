@@ -21,9 +21,9 @@ use std::collections::HashMap;
 type ArrayHashMap<K, V> = HashMap<K, V>;
 
 // ──────────────────────────────────────────────────────────────────────────
-// Debug stack dump — calls straight into bun_core (T0 owns the std::backtrace
-// fallback). Crash-report symbolication lives in bun_crash_handler and is
-// invoked from there directly when needed.
+// Debug stack dump: calls straight into bun_core, which prints stored traces
+// as raw addresses and routes current-stack dumps to bun_crash_handler, the
+// only crate that symbolizes.
 // ──────────────────────────────────────────────────────────────────────────
 
 #[inline]
